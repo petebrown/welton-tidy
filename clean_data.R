@@ -92,6 +92,20 @@ scorers_list <- separate_wider_delim(
   mutate(
     no_of_goals = str_extract(
       scorer, "\\d+"
+      ),
+    scorer2 = str_replace_all(
+      scorer, "[:space:]\\d+$", ""
+      ),
+    goals_scored = case_when(
+      str_detect(scorer, "([:space:]\\(?\\d+\\)?$)") ~ as.integer(str_extract(scorer, "\\d+")),
+      TRUE ~ 1
     ),
-    scorer2 = str_split(scorer, "[:space:]\\d+", n = 2)
+    penalty = case_when(
+      str_detect(scorer, "\\(\\d?\\s?[Pp]\\)") ~ 1,
+      TRUE ~ 0
+    ),
+    own_goal = case_when(
+      str_detect(scorer, "\\([Pp]\\)") ~ 1,
+      TRUE ~ 0
+    ),
   )
