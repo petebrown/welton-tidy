@@ -5,8 +5,8 @@ library(stringr)
 library(janitor)
 library(tidyr)
 
-df <- readxl::read_excel("./data/welton.xlsx", sheet = 2) %>%
-  janitor::clean_names()
+df <- read_excel("./data/welton.xlsx", sheet = 2) %>%
+  clean_names()
 
 results <- df %>%
   rename(
