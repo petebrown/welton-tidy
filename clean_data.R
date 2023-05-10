@@ -218,7 +218,7 @@ scorers_list %>%
 
 results %>%
   filter(
-    season == "1964/65",
+    season == "2021/22",
     game_type == "league"
   ) %>%
   ggplot(aes(x = comp_game_no, y = ppg)) +
@@ -228,7 +228,7 @@ results %>%
 
 results %>%
   filter(
-    season == "1964/65",
+    season == "2021/22",
     game_type == "league"
   ) %>%
   ggplot(aes(x = comp_game_no, y = ssn_pts)) +
