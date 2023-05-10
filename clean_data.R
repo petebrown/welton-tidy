@@ -1,13 +1,14 @@
-library(readxl)
 library(dplyr)
-library(readr)
-library(stringr)
-library(janitor)
-library(tidyr)
 library(ggplot2)
+library(janitor)
+library(readr)
+library(readxl)
+library(stringr)
+library(tidyr)
 
 df <- read_excel("./data/welton.xlsx", sheet = 2) %>%
   clean_names()
+
 edits_df <- read_excel("./data/gazza_check.xlsx", sheet = 1) %>%
   clean_names() %>%
   select(
@@ -20,22 +21,23 @@ edits_df <- read_excel("./data/gazza_check.xlsx", sheet = 1) %>%
   )
 
 results <- df %>%
+  # Rename columns
   rename(
     cup_round = r_6,
     competition = comp,
     venue = h_a,
-    gf = f,
-    ga = a,
+    goals_for = f,
+    goals_against = a,
     scorers = goalscorers,
     attendance = att,
   ) %>%
   mutate(
     outcome = case_when(
-      gf > ga ~ "W",
-      gf == ga ~ "D",
-      gf < ga ~ "L"
+      goals_for > goals_against ~ "W",
+      goals_for == goals_against ~ "D",
+      goals_for < goals_against ~ "L"
     ),
-    score = paste0(gf, "-", ga),
+    score = paste0(goals_for, "-", goals_against),
     scorers = case_when(
       scorers %in% c("x", "X") ~ NA,
       TRUE ~ scorers
@@ -87,8 +89,8 @@ results <- results %>%
     cup_round,
     game_no,
     comp_game_no,
-    gf,
-    ga,
+    goals_for,
+    goals_against,
     attendance,
     manager,
     referee
@@ -114,7 +116,9 @@ ssn_pts <- results %>%
   ) %>%
   arrange(date) %>%
   group_by(season) %>%
-  mutate(ssn_pts = cumsum(points)) %>%
+  mutate(
+    ssn_pts = cumsum(points)
+  ) %>%
   select(-points)
 
 results <- results %>%
@@ -202,7 +206,7 @@ scorers_list <- scorers_list %>%
 
 scorers_list %>%
   left_join(
-    results %>% filter(gf > 0), by = "date"
+    results %>% filter(goals_for > 0), by = "date"
   ) %>%
   group_by(season, player_name) %>%
   summarize(
@@ -246,9 +250,9 @@ results %>%
     losses = ifelse(outcome == "L", 1, 0),
     winless = ifelse(outcome != "W", 1, 0),
     draws = ifelse(outcome == "D", 1, 0),
-    cs = ifelse(ga == 0, 1, 0),
-    goalless = ifelse(gf == 0, 1, 0),
-    wins_cs = ifelse(outcome == "W" & ga == 0, 1, 0),
+    cs = ifelse(goals_against == 0, 1, 0),
+    goalless = ifelse(goals_for == 0, 1, 0),
+    wins_cs = ifelse(outcome == "W" & goals_against == 0, 1, 0),
     w_streak = ifelse(wins == 0, 0, sequence(rle(as.character(wins))$lengths)),
     unbeaten_streak = ifelse(unbeaten == 0, 0, sequence(rle(as.character(unbeaten))$lengths)),
     losing_streak = ifelse(losses == 0, 0, sequence(rle(as.character(losses))$lengths)),
@@ -272,7 +276,7 @@ results %>%
 results %>%
   filter(season == "2015/16") %>%
   mutate(
-    gd = gf - ga
+    gd = goals_for - goals_against
   ) %>%
   arrange(gd)
 
@@ -289,5 +293,9 @@ results %>%
   )) %>%
   filter(game_type == "cup") %>%
   arrange(competition, date) %>%
-  mutate(is_replay = ifelse()
-  )
+  mutate(
+    is_replay = case_when(
+      replay == 1 & opponent == lag(opponent) & competition == lag(competition) ~ 1,
+      TRUE ~ 0
+    )
+  ) %>% View()
