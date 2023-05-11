@@ -1,4 +1,4 @@
-library(dplyr)
+library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
 library(janitor)
 library(readr)
@@ -51,6 +51,12 @@ results <- df %>%
       date == as.Date("1980-04-05") ~ "Simon Neil, Graham Withey",
       date == as.Date("1961-02-25") ~ "Keith Simmons",
       TRUE ~ scorers
+    ),
+    cup_round = case_when(
+      date == as.Date("1951-09-22") ~ "P",
+      date == as.Date("1952-09-13") ~ "P",
+      date == as.Date("1952-09-20") ~ "P",
+      TRUE ~ cup_round
     ),
     scorers = str_replace(scorers, "Matty Morris Cam Allen 2", "Matty Morris, Cam Allen 2"),
     scorers = str_replace_all(scorers, "\\?+", "Unknown"),
@@ -126,6 +132,8 @@ results <- results %>%
   mutate(
     ppg = ssn_pts / comp_game_no
   )
+
+write_csv(results, "./welton-rovers/results.csv")
 
 scorers_list <- separate_wider_delim(
   results,
@@ -203,6 +211,8 @@ scorers_list <- scorers_list %>%
     )
   ) %>%
   select(-full_name_here)
+
+write_csv(scorers_list, "./welton-rovers/scorers.csv")
 
 scorers_list %>%
   left_join(
@@ -298,4 +308,4 @@ results %>%
       replay == 1 & opponent == lag(opponent) & competition == lag(competition) ~ 1,
       TRUE ~ 0
     )
-  ) %>% View()
+  )
