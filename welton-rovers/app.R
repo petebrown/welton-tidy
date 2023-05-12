@@ -6,6 +6,8 @@ library(DT)
 
 source("./R/get_data.R")
 source("./R/get_streaks.R")
+source("./R/get_pts_plot.R")
+source("./R/get_ppg_plot.R")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -30,7 +32,11 @@ ui <- fluidPage(
 
   mainPanel(
     # Display chart
-    plotlyOutput("seasonsPlot"),
+    plotlyOutput("pts_plot"),
+
+    hr(),
+
+    plotlyOutput("ppg_plot"),
 
     hr(),
 
@@ -46,6 +52,14 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
+
+  output$pts_plot <- renderPlotly(
+    get_pts_plot(input$season)
+  )
+
+  output$ppg_plot <- renderPlotly(
+    get_ppg_plot(input$season)
+  )
 
   output$streaks_table <- DT::renderDataTable(
     get_streaks(input$season),
@@ -65,8 +79,12 @@ server <- function(input, output, session) {
       pageLength = 5,
       dom = 'tip',
       info = FALSE,
-      paging = FALSE
+      paging = TRUE
     )
+  )
+
+  output$scorers_plot <- renderPlotly(
+    get_scorers_plot(input$seasons)
   )
 }
 

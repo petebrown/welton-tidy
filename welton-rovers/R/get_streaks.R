@@ -1,7 +1,7 @@
 get_streaks <- function(seasons) {
   streaks <- get_results_raw() %>%
     filter(season %in% seasons) %>%
-    arrange(season, game_no) %>%
+    arrange(season, date) %>%
     group_by(season) %>%
     mutate(
       wins = ifelse(outcome == "W", 1, 0),
