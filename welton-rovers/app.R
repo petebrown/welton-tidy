@@ -2,10 +2,13 @@ library(shiny)
 library(readr)
 library(dplyr, warn.conflicts = FALSE)
 library(plotly)
+library(DT)
+
+source("./R/get_data.R")
+source("./R/get_streaks.R")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-
 
   # Application title
   titlePanel("Season Records"),
@@ -14,7 +17,7 @@ ui <- fluidPage(
   sidebarPanel(
     # First drop-down where a season is selected
     selectInput(
-      "season", "Select seasons:", get_season_list(),
+      "season", "Select season(s):", get_season_list(),
       selected = "2022/23",
       multiple = TRUE
     ),
@@ -27,23 +30,44 @@ ui <- fluidPage(
 
   mainPanel(
     # Display chart
-    plotlyOutput("seasonsPlot")
+    plotlyOutput("seasonsPlot"),
+
+    hr(),
+
+    h1("Streaks"),
+    DT::dataTableOutput("streaks_table"),
+
+    hr(),
+
+    h1("Results"),
+    DT::dataTableOutput("results_table")
   )
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+  output$streaks_table <- DT::renderDataTable(
+    get_streaks(input$season),
+    rownames = FALSE,
+    options = list(
+      pageLength = 5,
+      dom = 'tip',
+      info = FALSE,
+      paging = FALSE
+      )
+  )
 
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-    })
+  output$results_table <- DT::renderDataTable(
+    filter_results(input$season),
+    rownames = FALSE,
+    options = list(
+      pageLength = 5,
+      dom = 'tip',
+      info = FALSE,
+      paging = FALSE
+    )
+  )
 }
 
 # Run the application

@@ -1,5 +1,6 @@
-get_streaks <- function(df) {
-  streaks <- df %>%
+get_streaks <- function(seasons) {
+  streaks <- get_results_raw() %>%
+    filter(season %in% seasons) %>%
     arrange(season, game_no) %>%
     group_by(season) %>%
     mutate(
@@ -28,7 +29,7 @@ get_streaks <- function(df) {
       "Clean sheets" = max(clean_sheets),
       "Didn't score" = max(goalless_streak)
     ) %>%
-    arrange(desc(Wins))
+    arrange(desc(Season))
 
   return(streaks)
 }
