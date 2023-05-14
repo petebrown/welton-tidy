@@ -26,9 +26,9 @@ ui <- fluidPage(
     ),
 
   # Second drop-down where user selects chart type
-  selectInput(
-    "chart", "Choose chart type:", get_chart_options()
-    )
+  # selectInput(
+  #   "chart", "Choose chart type:", get_chart_options()
+  #   )
   ),
 
   mainPanel(
@@ -52,7 +52,7 @@ ui <- fluidPage(
     hr(),
 
     h1("Top Scorers"),
-    plotlyOutput("scorers_plot"),
+    plotlyOutput("scorers_plot")
   )
 )
 
@@ -91,8 +91,9 @@ server <- function(input, output, session) {
   )
 
   output$scorers_plot <- renderPlotly(
-    plot_ssn_scorers(input$seasons)
+    plot_ssn_scorers(input$season)
   )
+
 }
 
 # Run the application

@@ -17,7 +17,5 @@ plot_ssn_scorers <- function(seasons) {
       y = NULL
     )
 
-  return (ggplotly(p))
+  ggplotly(p)
 }
-
-plot_ssn_scorers("2021/22")

@@ -3,11 +3,12 @@ get_chart_options <- function() {
     "Point Accumulation" = "pts",
     "Points-per-game" = "ppg"
   )
+  return(charts)
 }
 
 get_results_raw <- function() {
-  results <- read_csv("./results.csv", show_col_types = FALSE) %>%
-    return(results)
+  results <- read_csv("./results.csv", show_col_types = FALSE)
+  return(results)
 }
 
 get_results <- function() {
@@ -40,11 +41,13 @@ filter_results <- function(seasons) {
 get_season_list <- function() {
   results <- get_results()
   seasons <- sort(unique(results$season), decreasing = TRUE)
+
   return(seasons)
 }
 
 get_scorers <- function() {
   scorers <- read_csv("./scorers.csv", show_col_types = FALSE)
+
   return(scorers)
 }
 
@@ -53,10 +56,11 @@ filter_scorers <- function(seasons) {
   results <- filter_results(seasons)
   df <- scorers %>%
     inner_join(results, by = "date")
+  return(df)
 }
 
 get_ssn_scorers <- function(seasons) {
-  df<- filter_scorers(seasons) %>%
+  df <- filter_scorers(seasons) %>%
     group_by(season, player_name) %>%
     summarize(
       total_goals = sum(goals_scored),
