@@ -34,7 +34,7 @@ results <- df %>%
   mutate(
     goals_against = case_when(
       date == as.Date("2014-08-19") ~ 0,
-      TRUE ~ TRUE
+      TRUE ~ goals_against
     ),
     outcome = case_when(
       goals_for > goals_against ~ "W",

@@ -33,5 +33,3 @@ get_streaks <- function(seasons) {
 
   return(streaks)
 }
-
-get_streaks(get_results())

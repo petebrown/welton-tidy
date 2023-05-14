@@ -4,11 +4,6 @@ library(dplyr, warn.conflicts = FALSE)
 library(plotly)
 library(DT)
 
-source("./R/get_data.R")
-source("./R/get_streaks.R")
-source("./R/get_pts_plot.R")
-source("./R/get_ppg_plot.R")
-
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
