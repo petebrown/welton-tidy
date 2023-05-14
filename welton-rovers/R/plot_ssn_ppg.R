@@ -1,15 +1,18 @@
-get_pts_plot <- function(seasons) {
+plot_ssn_ppg <- function(seasons) {
   df <- get_results_raw() %>%
-    # df[df$season %in% seasons, df$game_type == "league"]
     filter(
       game_type == "league",
       season %in% seasons
     )
 
-  p <- ggplot(df, aes(x = comp_game_no, y = ssn_pts)) +
+  p <- ggplot(df, aes(x = comp_game_no, y = ppg)) +
     geom_line(aes(color = season)) +
     geom_point(aes(color = season)) +
-    theme_bw()
+    theme_bw() +
+    scale_y_continuous(
+      limits = c(0, 3),
+      breaks = c(0, 1, 2, 3)
+    )
 
   ggplotly(p)
 }

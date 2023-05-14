@@ -4,6 +4,12 @@ library(dplyr, warn.conflicts = FALSE)
 library(plotly)
 library(DT)
 
+source("./R/get_data.R")
+source("./R/get_streaks.R")
+source("./R/plot_ssn_pts.R")
+source("./R/plot_ssn_ppg.R")
+source("./R/plot_ssn_scorers.R")
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -41,7 +47,12 @@ ui <- fluidPage(
     hr(),
 
     h1("Results"),
-    DT::dataTableOutput("results_table")
+    DT::dataTableOutput("results_table"),
+
+    hr(),
+
+    h1("Top Scorers"),
+    plotlyOutput("scorers_plot"),
   )
 )
 
@@ -49,11 +60,11 @@ ui <- fluidPage(
 server <- function(input, output, session) {
 
   output$pts_plot <- renderPlotly(
-    get_pts_plot(input$season)
+    plot_ssn_pts(input$season)
   )
 
   output$ppg_plot <- renderPlotly(
-    get_ppg_plot(input$season)
+    plot_ssn_ppg(input$season)
   )
 
   output$streaks_table <- DT::renderDataTable(
@@ -71,7 +82,8 @@ server <- function(input, output, session) {
     filter_results(input$season),
     rownames = FALSE,
     options = list(
-      pageLength = 5,
+      pageLength = 10,
+      filter = ("top"),
       dom = 'tip',
       info = FALSE,
       paging = TRUE
@@ -79,7 +91,7 @@ server <- function(input, output, session) {
   )
 
   output$scorers_plot <- renderPlotly(
-    get_scorers_plot(input$seasons)
+    plot_ssn_scorers(input$seasons)
   )
 }
 
