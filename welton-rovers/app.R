@@ -3,6 +3,7 @@ library(readr)
 library(dplyr, warn.conflicts = FALSE)
 library(plotly)
 library(DT)
+library(forcats)
 
 source("./R/get_data.R")
 source("./R/get_streaks.R")
@@ -32,11 +33,12 @@ ui <- fluidPage(
   ),
 
   mainPanel(
-    # Display chart
+    h1("Point Accumulation"),
     plotlyOutput("pts_plot"),
 
     hr(),
 
+    h1("Points-per-Game"),
     plotlyOutput("ppg_plot"),
 
     hr(),
@@ -80,14 +82,16 @@ server <- function(input, output, session) {
 
   output$results_table <- DT::renderDataTable(
     filter_results(input$season),
-    rownames = FALSE,
-    options = list(
-      pageLength = 10,
-      filter = ("top"),
-      dom = 'tip',
-      info = FALSE,
-      paging = TRUE
-    )
+    # rownames = FALSE,
+    # options = list(
+    #   pageLength = 10,
+    #   filter = ("top"),
+    #   dom = 'tip',
+    #   info = FALSE,
+    #   paging = TRUE
+    # )
+    rownames= FALSE,
+    options = list()
   )
 
   output$scorers_plot <- renderPlotly(

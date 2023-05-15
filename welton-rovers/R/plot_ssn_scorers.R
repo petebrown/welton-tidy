@@ -1,21 +1,37 @@
 plot_ssn_scorers <- function(seasons) {
-  scorers_by_season <- get_ssn_scorers(seasons)
-  player_order <- scorers_by_season$player_name
+  df <- get_ssn_scorers(seasons) %>%
+    mutate(
+      ordered = paste0(season, total_goals, player_name) %>%
+        forcats::fct_inorder()
+    )
+
+  player_order <- df$player_name
 
   p <- ggplot(
-    scorers_by_season,
+    df,
     aes(
-      x = factor(player_name, levels = player_order),
+      x = ordered,
       y = total_goals
     )
   ) +
     geom_col() +
-    coord_flip() +
     theme_bw() +
     labs(
       x = NULL,
       y = NULL
+    ) +
+    facet_wrap(
+      ~season,
+      scales = "free_x"
+    ) +
+    scale_x_discrete(
+      labels = setNames(df$player_name, df$ordered)
     )
 
   ggplotly(p)
 }
+
+
+get_ssn_scorers(c("2017/18", "2021/22"))
+
+plot_ssn_scorers(c("2017/18", "2021/22"))

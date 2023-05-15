@@ -72,7 +72,12 @@ get_ssn_scorers <- function(seasons) {
       n = 3,
       order_by = total_goals
     ) %>%
-    arrange(season, total_goals, desc(player_name))
+    ungroup() %>%
+    arrange(
+      season,
+      desc(total_goals),
+      desc(player_name)
+    )
 
   return(df)
 }
