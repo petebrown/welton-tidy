@@ -29,6 +29,7 @@ get_results <- function() {
       referee,
       manager
     )
+
   return(results)
 }
 

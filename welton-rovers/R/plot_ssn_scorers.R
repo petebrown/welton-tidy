@@ -15,7 +15,7 @@ plot_ssn_scorers <- function(seasons) {
     )
   ) +
     geom_col() +
-    theme_bw() +
+    theme_classic() +
     labs(
       x = NULL,
       y = NULL

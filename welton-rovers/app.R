@@ -1,9 +1,11 @@
 library(shiny)
+library(shinydashboard)
 library(readr)
 library(dplyr, warn.conflicts = FALSE)
 library(plotly)
 library(DT)
 library(forcats)
+library(lubridate)
 
 source("./R/get_data.R")
 source("./R/get_streaks.R")
@@ -24,15 +26,11 @@ ui <- fluidPage(
       "season", "Select season(s):", get_season_list(),
       selected = "2022/23",
       multiple = TRUE
-    ),
-
-  # Second drop-down where user selects chart type
-  # selectInput(
-  #   "chart", "Choose chart type:", get_chart_options()
-  #   )
+    )
   ),
 
   mainPanel(
+
     h1("Point Accumulation"),
     plotlyOutput("pts_plot"),
 
@@ -48,10 +46,15 @@ ui <- fluidPage(
 
     hr(),
 
-    h1("Results"),
-    DT::dataTableOutput("results_table"),
+    h1("Results by Season"),
+    uiOutput("ssn_tabs"),
 
     hr(),
+
+    # h1("All Results"),
+    # DT::dataTableOutput("results_table"),
+    #
+    # hr(),
 
     h1("Top Scorers"),
     plotlyOutput("scorers_plot")
@@ -80,16 +83,51 @@ server <- function(input, output, session) {
       )
   )
 
+  output_ssn_results <- function(season) {
+    DT::renderDataTable(filter_results(season) %>%
+                          mutate(date = format(date, format = "%d %b %Y")),
+                        options = list(paging = TRUE,    ## paginate the output
+                                       pageLength = 10,  ## number of rows to output for each page
+                                       scrollX = TRUE,   ## enable scrolling on X axis
+                                       scrollY = TRUE,   ## enable scrolling on Y axis
+                                       autoWidth = FALSE, ## use smart column width handling
+                                       server = FALSE,   ## use client-side processing
+                                       dom = 'frtip',
+                                       columnDefs = list(list(targets = c(0, 2, 3, 6, 10, 11), className = 'dt-left'),
+                                                         list(targets = c(1, 4, 5, 7, 8), className = 'dt-center'),
+                                                         list(targets = c(9), className = 'dt-right'))
+                        ),
+                        extensions = 'Buttons',
+                        selection = 'single', ## enable selection of a single row
+                        filter = 'bottom',              ## include column filters at the bottom
+                        rownames = FALSE                ## don't show row numbers/names
+    )
+  }
+
+  # Dynamically render the tab panels based on user input
+  output$ssn_tabs <- renderUI({
+    if (!is.null(input$season)) {
+      # Get selected seasons
+      selected_seasons <- sort(input$season, decreasing = TRUE)
+
+      # Create a tab panel for each selected season
+      ssn_tabs <- lapply(selected_seasons, function(season) {
+        tabPanel(title = season,
+                 fluidRow(
+                   output_ssn_results(season)
+                 )
+        )
+      })
+
+      # Return the tabsetPanel containing season results
+      do.call(tabsetPanel, ssn_tabs)
+    } else {
+      p("Please select one or more seasons from the dropdown menu.")
+    }
+  })
+
   output$results_table <- DT::renderDataTable(
     filter_results(input$season),
-    # rownames = FALSE,
-    # options = list(
-    #   pageLength = 10,
-    #   filter = ("top"),
-    #   dom = 'tip',
-    #   info = FALSE,
-    #   paging = TRUE
-    # )
     rownames= FALSE,
     options = list()
   )
