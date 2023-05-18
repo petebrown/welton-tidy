@@ -32,7 +32,7 @@ plot_ssn_pts <- function(seasons) {
                 )) +
     geom_line(aes(color = season)) +
     geom_point(aes(color = season)) +
-    theme_classic()
+    theme_bw()
 
   ggplotly(p, tooltip = "text")
 }

@@ -135,7 +135,6 @@ server <- function(input, output, session) {
   output$scorers_plot <- renderPlotly(
     plot_ssn_scorers(input$season)
   )
-
 }
 
 # Run the application

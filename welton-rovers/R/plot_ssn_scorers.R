@@ -15,7 +15,7 @@ plot_ssn_scorers <- function(seasons) {
     )
   ) +
     geom_col() +
-    theme_classic() +
+    theme_bw() +
     labs(
       x = NULL,
       y = NULL
@@ -30,8 +30,3 @@ plot_ssn_scorers <- function(seasons) {
 
   ggplotly(p)
 }
-
-
-get_ssn_scorers(c("2017/18", "2021/22"))
-
-plot_ssn_scorers(c("2017/18", "2021/22"))

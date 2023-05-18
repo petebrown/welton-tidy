@@ -32,7 +32,7 @@ plot_ssn_ppg <- function(seasons) {
                 )) +
     geom_line(aes(color = season)) +
     geom_point(aes(color = season)) +
-    theme_classic() +
+    theme_bw() +
     scale_y_continuous(
       limits = c(0, 3),
       breaks = c(0, 1, 2, 3)
